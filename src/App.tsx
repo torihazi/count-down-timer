@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import "./App.css";
+import { formatTime } from "./lib/utils";
 
 function App() {
   // カウントダウンタイマーを作る上で必要になることはなんだろうか？
@@ -14,8 +15,9 @@ function App() {
   // setIntervalを使って1秒ごとに1sずつ減らしていく。
   // タイマーの機能はUI描画に関係ないことだから useEffectを使う
   // 秒数を記憶する、つまり状態を記憶する必要があるからuseStateを使う
+  // 同じ状態を記憶する用途でuseRefもあったが、それは確か不適切だったはず。いつか深ぼる。
   // stateの初期値は何がいいんだろうか。
-  const [time, setTime] = useState(0);
+  const [second, setSecond] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
 
   // 正しく動いているようには見えるけど、毎回setIntervalを作り直している。
@@ -66,7 +68,7 @@ function App() {
     if (!isRunning) return;
 
     const id = setInterval(() => {
-      setTime((prev) => {
+      setSecond((prev) => {
         if (prev <= 1) {
           clearInterval(id);
           return 0;
@@ -83,15 +85,15 @@ function App() {
   return (
     <>
       <div>
-        <h1>{time}</h1>
+        <h1>{formatTime(second)}</h1>
         <input
           type="number"
-          onChange={(e) => setTime(Number(e.target.value))}
+          onChange={(e) => setSecond(Number(e.target.value))}
         />
         <button onClick={() => setIsRunning(!isRunning)}>
           {isRunning ? "Stop" : "Start"}
         </button>
-        <button onClick={() => setTime(0)}>Reset</button>
+        <button onClick={() => setSecond(0)}>Reset</button>
       </div>
     </>
   );
