@@ -15,7 +15,8 @@ function App() {
   // タイマーの機能はUI描画に関係ないことだから useEffectを使う
   // 秒数を記憶する、つまり状態を記憶する必要があるからuseStateを使う
   // stateの初期値は何がいいんだろうか。
-  const [time, setTime] = useState(10);
+  const [time, setTime] = useState(0);
+  const [isRunning, setIsRunning] = useState(false);
 
   // 正しく動いているようには見えるけど、毎回setIntervalを作り直している。
   // useEffect(() => {
@@ -62,11 +63,11 @@ function App() {
   //stateが更新される => レンダリングされる => console.logを差し込んでも良い
   // クリアされているかは クリーンアップが呼ばれているかしか確認できる術はなさそう。
   useEffect(() => {
+    if (!isRunning) return;
+
     const id = setInterval(() => {
       setTime((prev) => {
         if (prev <= 1) {
-          console.log("止まるよ");
-          console.log(id);
           clearInterval(id);
           return 0;
         }
@@ -77,12 +78,20 @@ function App() {
       console.log("クリアされるよ");
       clearInterval(id);
     };
-  }, []);
+  }, [isRunning]);
 
   return (
     <>
       <div>
         <h1>{time}</h1>
+        <input
+          type="number"
+          onChange={(e) => setTime(Number(e.target.value))}
+        />
+        <button onClick={() => setIsRunning(!isRunning)}>
+          {isRunning ? "Stop" : "Start"}
+        </button>
+        <button onClick={() => setTime(0)}>Reset</button>
       </div>
     </>
   );
